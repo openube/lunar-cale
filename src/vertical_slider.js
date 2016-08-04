@@ -1,21 +1,6 @@
 import {dom as m_dom, event as m_event, env as m_env} from 'mobile-utils';
 
-const
-	_time = ()=>(new Date).getTime()
-
-	//TODO 修正和优化
-	,do_transition = function(dom, itemHeight, value, tweenMode, time) {
-		let
-			d = tweenMode
-				? -value * itemHeight /*tweenMode as idx*/
-				: value
-			,s = tweenMode
-				? time || 6.18 * 4 / 100000
-				: 0
-		;
-		m_dom.transformXY(dom, 0, d, s);
-	}
-;
+const _time = ()=>(new Date).getTime();
 
 /**
  * 可以手指上下滑动的垂直列表
@@ -71,11 +56,7 @@ export default class VSlider {
 	 */
 	setCurr(idx, needTween = true) {
 		this.topIdx = idx;
-		let tArgs = [this.inner, this.itemH, idx, true];
-		if (!needTween) {
-			tArgs.push(0);
-		}
-		do_transition.apply(null, tArgs);
+		this._move(-this.itemH*idx, needTween);
 	}
 	/**
 	 * 取得所选范围
@@ -83,6 +64,13 @@ export default class VSlider {
 	 */
 	getRange() {
 		return Array.prototype.slice.call(this.childs, this.topIdx, this.topIdx+this.config.itemCount);
+	}
+	/**
+	 * @private
+	 */
+	_move(top, needTween=false) {
+		let tween_time = needTween ? .618 * 4 / 10000 : 0;
+		m_dom.transformXY(this.inner, 0, top, tween_time);
 	}
 	/**
 	 * @private
@@ -109,9 +97,11 @@ export default class VSlider {
 	_e_tm(e) { /*touchmove*/
 		if (!m_env.touchSupport) e.preventDefault();
 
-		let v = e.touches[0].clientY - this.dinfo_start.stageY;
-		v += this.dinfo_start.innerTop;
-		do_transition(this.inner, this.itemH, v);
+		let 
+			{stageY, innerTop} = this.dinfo_start
+			,top = e.touches[0].clientY - stageY + innerTop
+		;
+		this._move(top);
 
 		let c = e.currentTarget;
 		if (typeof c.dataset['touching'] === 'undefined'
@@ -142,8 +132,10 @@ export default class VSlider {
 		};
 
 		let
-			tTime = this.dinfo_end.time - this.dinfo_start.time,
-			tDis = this.dinfo_end.innerTop - this.dinfo_start.innerTop,
+			{time:s_time, innerTop:s_innerTop} = this.dinfo_start,
+			{time:e_time, innerTop:e_innerTop} = this.dinfo_end,
+			tTime = e_time - s_time,
+			tDis = e_innerTop - s_innerTop,
 			shortDis = Math.abs(tDis) < 5,
 			longTime = tTime > 200;
 

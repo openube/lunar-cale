@@ -42,7 +42,6 @@ export default class LunarCale {
 	 */
 	show() {
 		locker.lock();
-		console.log(this);
 		this._is_visible = true;
 		this._render();
 		return this;
