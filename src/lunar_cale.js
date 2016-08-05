@@ -19,6 +19,7 @@ const
 				<label><input type="checkbox"
 					class="mod_round_checkbox"
 					${mode===LunarCale.LUNAR?'checked':''} />农历</label>
+				<p></p>
 				<a class="finishBtn">完成</a>
 			</div>
 			<div class="bd">
@@ -271,7 +272,10 @@ export default class LunarCale {
 			},
 			parseResult = function(){
 				let [y,m,d] = getResults();
-				_this._parsing = {y, m, d};
+				if (_this.mode === LunarCale.LUNAR) {
+					let lunar = LunarFormatter.solar2lunar(y,m,d);
+					find(document, `#${domId} .hd p`).innerHTML = `${lunar.Animal}年(${lunar.gzYear})`;
+				}
 				if (selectCallback !== noop){
 					selectCallback.call(null, y, m, d);
 				}
