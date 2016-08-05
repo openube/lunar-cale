@@ -1,3 +1,47 @@
+@import 'functions';
+
+input[type=checkbox].mod_round_checkbox{
+	-webkit-appearance:none;
+	.size(78px/2, 47px/2);
+	border-radius: 47px/2;
+	box-sizing: border-box;
+	background: #fff;
+	border: 1.5px solid #e5e5e5;
+	position: relative;
+
+	&::after{
+		content: '';
+		position: absolute;
+		top: -1px;
+		left: -1px;
+		.circle(44px/2);
+		background: #fff;
+		.box-shadow(1px 0 rgba(0,0,0,.1));
+		border: 1px solid rgba(0,0,0,.18);
+		-webkit-transition:left .2s ease-in;
+	}
+
+	&:checked{
+		@clr: #00E367;
+
+		background: @clr;
+		border: none;
+
+		&::after{
+			.box-shadow(-1px 0 rgba(0,0,0,.1));
+			background: #fff;
+			top: 0;
+			left: 15px;
+			border-color: @clr;
+		}
+	}
+	&:focus {
+		outline:0 none;
+		-webkit-user-modify: read-write-plaintext-only; //低版本安卓用js设为initial
+		-webkit-tap-highlight-color: rgba(0,0,0,0);
+	}
+}
+
 //选择“日期/时/分”
 #lunar_cale_panel{
 	* {
@@ -21,15 +65,23 @@
 		height:44px;border-bottom:1px solid #323943;position:relative;
 		background-image:-webkit-gradient(linear, 0 0, 0 bottom, from( #929292 ), to( #666666 ));
 		background-image:-webkit-linear-gradient(top, #929292, #6f6f6f, #666666);
+		display: flex;
+		align-items: center;
+		padding: 0 3%;
 
-		.finishBtn{display:inline-block;position:absolute;top:7px;right:6px;
+		label {
+			flex: 1;
+			text-align: left;
+		}
+		.finishBtn{display:inline-block;
 			width:43px;height:28px;border:1px solid #0e2036;-webkit-border-radius:4px;
 			background-image:-webkit-gradient(linear, 0 0, 0 bottom, from( #72a1f1 ), to( #2163de ));
 			background-image:-webkit-linear-gradient(top, #72a1f1, #2163de);
 			color:#fff;text-shadow:0 -1px #3a5290;font-size:12px;text-align:center;line-height:28px;
-		}
-		.finishBtn:active{
-			background-image:-webkit-linear-gradient(top, #2163de, #72a1f1);
+
+			&:active{
+				background-image:-webkit-linear-gradient(top, #2163de, #72a1f1);
+			}
 		}
 	}
 	.bd{
@@ -52,16 +104,29 @@
 		);
 	}
 
+	.year {
+		flex: 1.5;
+	}
+	.month,
+	.date {
+		flex: 1;
+	}
+	&.lunar {
+		.year {
+			flex: 1.5;
+		}
+		.month {
+			flex: 1;
+		}
+		.date {
+			flex: 2;
+		}
+	}
+
 	.wdecoration {
 		display: flex;
 
-		.wbk,
-		.wline {
-
-		}
-
 		.wbk{
-			flex: 1;
 			height:195px;display:inline-block;margin:0 2px;
 			background-image:-webkit-gradient(linear, left top, left bottom,
 				from(#b8bbc4),
@@ -100,8 +165,6 @@
 
 			ol{list-style-type:none;display:block;text-align:center;}
 			li{height:39px;line-height:39px;display:block;color:#0a0a0c;font-size:18px;}
-
-			flex: 1;
 
 			&.day,
 			&.hour{

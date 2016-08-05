@@ -1,19 +1,24 @@
-import {format as m_format, utils as m_utils} from 'mobile-utils';
+import {format as m_format, utils as m_utils, time as m_time} from 'mobile-utils';
 import VSlider from "./vertical_slider";
+import LunarFormatter from "./lunar_formatter";
 import css from './cale.less'; // eslint-disable-line no-unused-vars
 
 const
 	domId = 'lunar_cale_panel'
 	,noop = ()=>void(0)
+	,find = (container, selector)=>container.querySelector(selector)
 	,ensure_num = m_format.num_pad_left
 	,locker = new m_utils.ScrollLocker()
-	,li_tmpl = type=>(f, idx) => `<li id="${type}_li${f}" rel="${idx}">${idx}</li>`
+	,li_tmpl = type=>(f, idx, display=null) => `<li id="${type}_li${f}" rel="${idx}">${display || idx}</li>`
 	,year_tmpl = li_tmpl('year')
 	,month_tmpl = li_tmpl('month')
 	,date_tmpl = li_tmpl('date')
-	,base_tmpl = ()=>`
-		<div id="${domId}">
+	,base_tmpl = (mode=LunarCale.SOLAR)=>`
+		<div id="${domId}" class="${mode===LunarCale.LUNAR?'lunar':'solar'}">
 			<div class="hd">
+				<label><input type="checkbox"
+					class="mod_round_checkbox"
+					${mode===LunarCale.LUNAR?'checked':''} />农历</label>
 				<a class="finishBtn">完成</a>
 			</div>
 			<div class="bd">
@@ -41,11 +46,29 @@ const
  * @type {Object}
  */
 export default class LunarCale {
+	static get SOLAR() {
+		return 0;
+	}
+	static get LUNAR() {
+		return 1;
+	}
+
+	get mode() {
+		return this._mode;
+	}
+	set mode(m) {
+		if (m !== LunarCale.SOLAR && m !== LunarCale.LUNAR) {
+			throw new Error('[LunarCale] invalid mode!');
+		}
+		this._mode = m;
+		this._render();
+	}
+
 	/**
 	 * 判断控件当前是否可见
 	 * @type {Boolean}
 	 */
-	get isVisible(){
+	get isVisible() {
 		return this._is_visible;
 	}
 
@@ -76,23 +99,30 @@ export default class LunarCale {
 	/**
 	 * 构造函数
 	 * @constructor
-	 * @param  {Number}   startYear - 开始年份 yyyy
-	 * @param  {Number}   endYear - 结束年份 yyyy
-	 * @param  {String}   [existValue=null] - 初始选中的日期 yyyy-mm-dd
-	 * @param  {Function} [selectCallback=null] - 选中新值时的回调函数
-	 * @param  {[type]}   [closeCallback=null] - 关闭面板时的回调函数
+	 * @param  {Object} [setting={startYear, endYear, initShownYMD, selectCallback, closeCallback}]
+	 * @description 参数说明： startYear - 开始年份 yyyy; endYear - 结束年份 yyyy; initShownYMD - 初始选中的日期 yyyy-mm-dd; selectCallback - 选中新值时的回调函数 - 关闭面板时的回调函数
 	 * @return {Object} 当前控件
 	 */
-	constructor(startYear, endYear, existValue=null, selectCallback=noop, closeCallback=noop) {
+	constructor(setting) {
 		let
+			_this = this,
+			cfg = Object.assign({
+				mode: LunarCale.SOLAR
+				,startYear: 1970
+				,endYear: m_time.today().getFullYear()
+				,initShownYMD: m_time.date_to_YMD(m_time.today())
+				,selectCallback: noop
+				,closeCallback: noop
+			}, setting),
+			{startYear, endYear, initShownYMD, selectCallback, closeCallback} = cfg,
 			d_d,
 			d_m,
 			d_y,
 			yS = parseInt(startYear),
 			yE = parseInt(endYear),
-			yOld = existValue
+			yOld = initShownYMD
 				? (function(){
-						let earr = existValue.split('-');
+						let earr = initShownYMD.split('-');
 						return {
 							year: earr[0],
 							month: ensure_num(earr[1]),
@@ -101,7 +131,7 @@ export default class LunarCale {
 					}())
 				: null,
 
-			tmpl = base_tmpl(),
+			tmpl,
 
 			cacheYear = {},
 			fillYears = function(){
@@ -116,7 +146,8 @@ export default class LunarCale {
 				arr.push(blank);
 				arr.push(blank);
 				for (i= yS, lng= yE+1; i<lng; i++){
-					arr.push( year_tmpl(flag++, i) );
+					let args = [flag++, i];
+					arr.push( year_tmpl.apply(null, args) );
 					cacheYear['key_'+i] = flag-1;
 				}
 				arr.push(blank);
@@ -155,7 +186,7 @@ export default class LunarCale {
 			loop_total_d = 31,
 			loop_offset_d = 15,
 			cacheDate = {},
-			fillDates = function(dayNum){
+			fillDates = function(dayNum, y, m){
 				loop_total_d = dayNum;
 				cacheDate = {};
 
@@ -165,8 +196,18 @@ export default class LunarCale {
 					lng,
 					flag = 0,
 					plus_and_fix = n=>ensure_num(n+1),
-					add = (f,i)=>arr.push( date_tmpl(f, plus_and_fix(i)) )
+					add = (f,i)=>{
+						let d = plus_and_fix(i);
+						let args = [f, d];
+						if (_this.mode === LunarCale.LUNAR) {
+							let lunar = LunarFormatter.solar2lunar(y, ensure_num(m+1), d);
+							let str = `${d} <small>${lunar.IMonthCn}${lunar.IDayCn}</small>`;
+							args.push(str);
+						}
+						arr.push( date_tmpl.apply(null, args) )
+					}
 				;
+
 				for (i=loop_total_d-loop_offset_d,lng=loop_total_d;i<lng;i++){
 					add(flag++, i);
 				}
@@ -199,7 +240,7 @@ export default class LunarCale {
 					day.setDate(day.getDate() + 1);
 				}
 
-				document.querySelector(did).innerHTML = fillDates(dnum);
+				find(document, did).innerHTML = fillDates(dnum, p_year, p_month);
 
 				d_d = new VSlider({
 					containerContext: did,
@@ -207,7 +248,9 @@ export default class LunarCale {
 									? cacheDate['key_'+yOld.date] - 2
 									: loop_total_d + loop_offset_d - 2,
 					callback: function(currArr){
-						let midx = parseInt( currArr[2].id.replace('date_li', '') );
+						let
+							mdom = currArr[2],
+							midx = parseInt( mdom.id.replace('date_li', '') );
 						if (midx<(loop_total_d-loop_offset_d))
 							this.setCurr(midx+(loop_total_d-2), false);
 						else if	(midx>(loop_total_d+loop_offset_d-1))
@@ -227,8 +270,10 @@ export default class LunarCale {
 				return null;
 			},
 			parseResult = function(){
+				let [y,m,d] = getResults();
+				_this._parsing = {y, m, d};
 				if (selectCallback !== noop){
-					selectCallback.apply(null, getResults());
+					selectCallback.call(null, y, m, d);
 				}
 			},
 
@@ -244,13 +289,18 @@ export default class LunarCale {
 			}
 		;
 
+		this._mode = cfg.mode;
+
 		this._render = () => {
 			let ap = document.getElementById(domId);
 			if (ap)	closeFunc();
 
+			tmpl = base_tmpl(this._mode);
+
 			fillYears();
 			fillMonths();
 			document.body.insertAdjacentHTML('beforeEnd', tmpl);
+			ap = document.getElementById(domId);
 
 			d_y = new VSlider({
 				containerContext: `#${domId} .wbox.year`,
@@ -266,7 +316,7 @@ export default class LunarCale {
 				defaultIndex:  yOld
 								? cacheMonth['key_'+yOld.month] + loop_offset_m - 2
 								: loop_total_m + loop_offset_m - 2,
-				callback: function(currArr){ // eslint-disable-line no-unused-vars
+				callback: function(currArr){
 					let hidx = parseInt( currArr[2].id.replace('month_li', '') );
 					if (hidx<(loop_total_m-loop_offset_m))
 						this.setCurr(hidx+(loop_total_m-2), false);
@@ -276,12 +326,16 @@ export default class LunarCale {
 				}
 			});
 
-			document.querySelector('.finishBtn', ap).addEventListener('click', closeFunc);
+			find(ap, '.finishBtn').addEventListener('click', closeFunc);
 			if (closeCallback !== noop) {
-				document.querySelector('.finishBtn', ap).addEventListener('click', function(){
+				find(ap, '.finishBtn').addEventListener('click', function(){
 					closeCallback.apply(null, getResults());
 				});
 			}
+			find(ap, '.hd input[type=checkbox]').addEventListener('click', e=>{
+				let lunar_mode = e.currentTarget.checked;
+				_this.mode = lunar_mode ? LunarCale.LUNAR : LunarCale.SOLAR;
+			});
 
 			renderFunc();
 		};
