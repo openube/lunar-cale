@@ -3,7 +3,7 @@ import VSlider from "./vertical_slider";
 import css from './cale.less'; // eslint-disable-line no-unused-vars
 
 const
-	domId = 'DateChooserPanel'
+	domId = 'lunar_cale_panel'
 	,noop = ()=>void(0)
 	,ensure_num = m_format.num_pad_left
 	,locker = new m_utils.ScrollLocker()
@@ -11,16 +11,29 @@ const
 	,year_tmpl = li_tmpl('year')
 	,month_tmpl = li_tmpl('month')
 	,date_tmpl = li_tmpl('date')
-	,base_tmpl = ()=>`<div id="${domId}">
-			<div class="hd"><a class="finishBtn">完成</a></div><div class="bd">
-			<div class="win">
-			<div class="wbk year"></div><div class="wline"></div><div class="wbk month"></div>
-			<div class="wline"></div><div class="wbk date"></div><div class="wglass"></div>
-			<div class="wmain">
-			<div class="wbox year">{#year#}</div>
-			<div class="wbox month">{#month#}</div>
-			<div class="wbox date"></div>
-			</div></div></div></div>`
+	,base_tmpl = ()=>`
+		<div id="${domId}">
+			<div class="hd">
+				<a class="finishBtn">完成</a>
+			</div>
+			<div class="bd">
+				<div class="win">
+					<div class="wdecoration">
+						<div class="wbk year"></div>
+						<div class="wline"></div>
+						<div class="wbk month"></div>
+						<div class="wline"></div>
+						<div class="wbk date"></div>
+					</div>
+					<div class="wglass"></div>
+					<div class="wmain">
+						<div class="wbox year">{#year#}</div>
+						<div class="wbox month">{#month#}</div>
+						<div class="wbox date"></div>
+					</div>
+				</div>
+			</div>
+		</div>`
 ;
 
 /**

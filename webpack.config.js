@@ -1,6 +1,7 @@
 var
   webpack = require('webpack'),
   path = require('path'),
+  autoprefixer = require('autoprefixer'),
   libraryName = 'lunar-cale',
   outputFile = libraryName + '.js',
   UglifyJsPlugin = webpack.optimize.UglifyJsPlugin,
@@ -39,10 +40,17 @@ let config = {
       },
       {
         test: /\.less$/,
-        loader: "style!css!less?noIeCompat"
+        loader: env==='build'
+          ? "style!css!postcss!less?noIeCompat"
+          : "style!css!less"
       }
     ]
   },
+  postcss: [
+    autoprefixer({
+      browsers: ['iOS >=3', 'Android >=2']
+    })
+  ],
   resolve: {
     root: path.resolve('./src'),
     extensions: ['', '.js']

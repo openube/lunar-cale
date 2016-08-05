@@ -19,6 +19,7 @@
   "license": "ISC",
   "homepage": "https://github.com/tonylua/mobile-utils",
   "devDependencies": {
+    "autoprefixer": "^6.4.0",
     "babel-cli": "^6.10.1",
     "babel-core": "^6.10.4",
     "babel-eslint": "^6.1.0",
@@ -35,6 +36,7 @@
     "less-loader": "^2.2.3",
     "mocha": "^2.5.3",
     "mocha-jsdom": "^1.1.0",
+    "postcss-loader": "^0.9.1",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.1",
     "yargs": "^4.7.1"
