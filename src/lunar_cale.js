@@ -5,10 +5,12 @@ import css from './cale.less'; // eslint-disable-line no-unused-vars
 
 const
 	domId = 'lunar_cale_panel'
-	,noop = ()=>void(0)
-	,find = (container, selector)=>container.querySelector(selector)
 	,ensure_num = m_format.num_pad_left
 	,locker = new m_utils.ScrollLocker()
+	,noop = ()=>void(0)
+	,find = (container, selector)=>container.querySelector(selector)
+	,vs_val = vslider=>vslider.getRange()[2].getAttribute('rel')
+	,lunar_str = lunar=>`${lunar.Animal}年 ${lunar.gzYear} ${lunar.IMonthCn} ${lunar.IDayCn}`
 	,li_tmpl = type=>(f, idx, display=null) => `<li id="${type}_li${f}" rel="${idx}">${display || idx}</li>`
 	,year_tmpl = li_tmpl('year')
 	,month_tmpl = li_tmpl('month')
@@ -225,8 +227,8 @@ export default class LunarCale {
 
 			checkDateNum = function(){
 				let
-					p_year = parseInt(d_y.getRange()[2].getAttribute('rel'))
-					,p_month = parseInt(d_m.getRange()[2].getAttribute('rel')) - 1
+					p_year = parseInt( vs_val(d_y) )
+					,p_month = parseInt( vs_val(d_m) ) - 1
 					,day = new Date
 					,dnum = 0
 					,did = `#${domId} .wbox.date`
@@ -262,22 +264,26 @@ export default class LunarCale {
 			},
 			getResults = function(){
 				try{
-					return [
-						(d_y.getRange()[2].getAttribute('rel')),
-						(d_m.getRange()[2].getAttribute('rel')),
-						(d_d.getRange()[2].getAttribute('rel'))
-					];
+					let 
+						rst = [
+							vs_val(d_y),
+							vs_val(d_m),
+							vs_val(d_d)
+						]
+						,lunar = LunarFormatter.solar2lunar.apply(null, rst)
+					;
+					rst.push(lunar);
+					return rst;
 				}catch(ex){}
 				return null;
 			},
 			parseResult = function(){
-				let [y,m,d] = getResults();
+				let [y,m,d,lunar] = getResults();
 				if (_this.mode === LunarCale.LUNAR) {
-					let lunar = LunarFormatter.solar2lunar(y,m,d);
 					find(document, `#${domId} .hd p`).innerHTML = `${lunar.Animal}年(${lunar.gzYear})`;
 				}
 				if (selectCallback !== noop){
-					selectCallback.call(null, y, m, d);
+					selectCallback.call(null, y, m, d, lunar_str(lunar));
 				}
 			},
 
@@ -333,7 +339,8 @@ export default class LunarCale {
 			find(ap, '.finishBtn').addEventListener('click', closeFunc);
 			if (closeCallback !== noop) {
 				find(ap, '.finishBtn').addEventListener('click', function(){
-					closeCallback.apply(null, getResults());
+					let [y,m,d,lunar] = getResults();
+					closeCallback(y,m,d,lunar_str(lunar));
 				});
 			}
 			find(ap, '.hd input[type=checkbox]').addEventListener('click', e=>{

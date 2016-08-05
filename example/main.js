@@ -22,10 +22,11 @@ require(["mobile-utils", "lunar-cale"], function(mUtils, lCale) {
         startYear: 1982,
         endYear: 2022,
         initShownYMD: '2016-09-01',
-        selectCallback: function(y,m,d) {
-            console.log([y, m, d]);
+        selectCallback: function(y,m,d,lunar) {
+            console.log([y, m, d, lunar]);
         },
-        closeCallback: function(y,m,d) {
+        closeCallback: function(y,m,d,lunar) {
+            console.log([y, m, d, lunar]);
             alert('closed!');
         }
     });
