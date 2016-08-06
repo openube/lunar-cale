@@ -69,7 +69,12 @@ input[type=checkbox].mod_round_checkbox{
 		padding: 0 3%;
 
 		label {
-			text-align: left;
+			display: flex;
+    		align-items: center;
+
+    		input {
+    			margin-right: 5px;
+    		}
 		}
 		p {
 			flex: 1;
@@ -192,4 +197,70 @@ input[type=checkbox].mod_round_checkbox{
 		}
 	}
 
-}
+	&.normal {
+		box-shadow:-1px 0 1px #eee;
+		border-top-color: #ddd;
+		font-size: 14px;
+		.hd {
+			background-image: none;
+			background: #fff;
+			border-bottom-color: #e8e8e8;
+			margin-left: 15px;
+			padding-left: 0;
+			.finishBtn {
+				color: #3587db;
+				background-image: none;
+				border: none;
+			}
+		}
+		.bd {
+			background-image: none;
+			box-shadow: none;
+			.win {
+				background-image: none;
+				border:none;
+				width: 100%;
+				.wdecoration {
+					display: none;
+				}
+				.wglass {
+					background-image: none;
+					border: #d9d9d9 solid;
+					border-width: 1px 0;
+					box-shadow: none;
+					height: 30px;
+					top: 50%;
+					transform: translateY(-16px);
+				}
+				.wmain {
+					margin: 0 10%;
+					width: 80%;
+					.wbox {
+						box-shadow: none;
+						ol {
+							li {
+								&[data-rowstyle=row1],
+								&[data-rowstyle=row3] {
+									opacity: .6;
+									transform: scaleY(.8);
+								}
+								&[data-rowstyle=row0],
+								&[data-rowstyle=row4] {
+									opacity: .3;
+									transform: scaleY(.6);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	} //end of .normal
+
+	&.solar {
+		.hd {
+			color: #a7a7a7;
+		}
+	}
+
+} //end of #lunar_cale_panel

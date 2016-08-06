@@ -7,8 +7,8 @@ function _es6mod(mod) {
 
 var _myRjsConfigObj = {
     paths: {
-        "mobile-utils": "../node_modules/mobile-utils/lib/mobile-utils",
-        "lunar-cale": "../lib/lunar-cale"
+        "mobile-utils": "../node_modules/mobile-utils/lib/mobile-utils.min",
+        "lunar-cale": "../lib/lunar-cale.min"
     },
     shim: {
     },
@@ -18,18 +18,20 @@ require.config(_myRjsConfigObj);
 
 require(["mobile-utils", "lunar-cale"], function(mUtils, lCale) {
 
-    var lc = new lCale({
-        startYear: 1982,
-        endYear: 2022,
-        initShownYMD: '2016-09-01',
-        selectCallback: function(y,m,d,lunar) {
-            console.log([y, m, d, lunar]);
-        },
-        closeCallback: function(y,m,d,lunar) {
-            console.log([y, m, d, lunar]);
-            alert('closed!');
-        }
-    });
+    var
+        ele = document.querySelector('article'),
+        lc = new lCale({
+            mode: lCale.LUNAR,
+            startYear: 1982,
+            endYear: 2022,
+            initShownYMD: '2016-09-01',
+            selectCallback: function(y,m,d,lunar) {
+                ele.innerHTML = ['[on selected]<br/>', y, m, d, lunar].join(', ');
+            },
+            closeCallback: function(y,m,d,lunar) {
+                ele.innerHTML = ['[on closed]<br/>', y, m, d, lunar].join(', ');
+            }
+        });
 
     document.getElementById('trigger').addEventListener('click', lc.show.bind(lc));
 

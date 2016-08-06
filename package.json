@@ -1,12 +1,12 @@
 {
   "name": "lunar-cale",
-  "version": "1.0.5",
+  "version": "0.0.1",
   "description": "common utils of mobile html5 development",
   "main": "lib/lunar-cale",
   "scripts": {
     "build": "webpack --mode=build",
     "dev": "webpack --progress --colors --watch --mode=dev",
-    "doc": "jsdoc2md src/*.js --template README.hbs > README.md"
+    "doc": "jsdoc2md src/lunar_cale.js --template README.hbs > README.md"
   },
   "repository": {
     "type": "git",

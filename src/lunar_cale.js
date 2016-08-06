@@ -1,4 +1,4 @@
-import {format as m_format, utils as m_utils, time as m_time} from 'mobile-utils';
+import {env as m_env, format as m_format, utils as m_utils, time as m_time} from 'mobile-utils';
 import VSlider from "./vertical_slider";
 import LunarFormatter from "./lunar_formatter";
 import css from './cale.less'; // eslint-disable-line no-unused-vars
@@ -9,14 +9,20 @@ const
 	,locker = new m_utils.ScrollLocker()
 	,noop = ()=>void(0)
 	,find = (container, selector)=>container.querySelector(selector)
-	,vs_val = vslider=>vslider.getRange()[2].getAttribute('rel')
+	,vs_range = vslider=>vslider.getRange()
+	,vs_val = vslider=>vs_range(vslider)[2].getAttribute('rel')
 	,lunar_str = lunar=>`${lunar.Animal}年 ${lunar.gzYear} ${lunar.IMonthCn} ${lunar.IDayCn}`
 	,li_tmpl = type=>(f, idx, display=null) => `<li id="${type}_li${f}" rel="${idx}">${display || idx}</li>`
 	,year_tmpl = li_tmpl('year')
 	,month_tmpl = li_tmpl('month')
 	,date_tmpl = li_tmpl('date')
 	,base_tmpl = (mode=LunarCale.SOLAR)=>`
-		<div id="${domId}" class="${mode===LunarCale.LUNAR?'lunar':'solar'}">
+		<div id="${domId}"
+			class="${
+				mode===LunarCale.LUNAR?'lunar':'solar'
+			} ${
+				(m_env.ios && m_env.version<8) ? 'ios7' : 'normal'
+			}">
 			<div class="hd">
 				<label><input type="checkbox"
 					class="mod_round_checkbox"
@@ -48,7 +54,7 @@ const
  * 可支持农历和公历的移动端触控日历控件
  * @type {Object}
  */
-export default class LunarCale {
+class LunarCale {
 	static get SOLAR() {
 		return 0;
 	}
@@ -102,8 +108,8 @@ export default class LunarCale {
 	/**
 	 * 构造函数
 	 * @constructor
-	 * @param  {Object} [setting={startYear, endYear, initShownYMD, selectCallback, closeCallback}]
-	 * @description 参数说明： startYear - 开始年份 yyyy; endYear - 结束年份 yyyy; initShownYMD - 初始选中的日期 yyyy-mm-dd; selectCallback - 选中新值时的回调函数 - 关闭面板时的回调函数
+	 * @param  {Object} [setting={mode, startYear, endYear, initShownYMD, selectCallback, closeCallback}]
+	 * @description 参数说明： mode - 初始模式; startYear - 开始年份 yyyy; endYear - 结束年份 yyyy; initShownYMD - 初始选中的日期 yyyy-mm-dd; selectCallback - 选中新值时的回调函数 - 关闭面板时的回调函数
 	 * @return {Object} 当前控件
 	 */
 	constructor(setting) {
@@ -259,12 +265,13 @@ export default class LunarCale {
 						else if	(midx>(loop_total_d+loop_offset_d-1))
 							this.setCurr(midx-(loop_total_d+2), false);
 						parseResult();
+						fixStyle();
 					}
 				});
 			},
 			getResults = function(){
 				try{
-					let 
+					let
 						rst = [
 							vs_val(d_y),
 							vs_val(d_m),
@@ -287,6 +294,12 @@ export default class LunarCale {
 				}
 			},
 
+			fixStyle = function() {
+				if (!/normal/.test(find(document, `#${domId}`).className)) return;
+				[].forEach.call(document.querySelectorAll(`#${domId} ol li`), li=>(delete li.dataset['rowstyle']));
+				[d_y, d_m, d_d].map(vs_range).forEach(range=>range.forEach((item,idx)=>item.dataset['rowstyle']='row'+idx));
+			},
+
 			closeFunc = function(e) { // eslint-disable-line no-unused-vars
 				let ap = document.getElementById(domId);
 				try{
@@ -296,6 +309,7 @@ export default class LunarCale {
 			renderFunc = function(){
 				checkDateNum();
 				parseResult();
+				fixStyle();
 			}
 		;
 
@@ -356,3 +370,5 @@ export default class LunarCale {
 		return this;
 	}
 }
+
+export default LunarCale;
