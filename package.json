@@ -1,7 +1,7 @@
 {
   "name": "lunar-cale",
-  "version": "0.0.1",
-  "description": "common utils of mobile html5 development",
+  "version": "0.0.2",
+  "description": "touch control component can support the traditional Chinese calendar",
   "main": "lib/lunar-cale",
   "scripts": {
     "build": "webpack --mode=build",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/tonylua/mobile-utils.git"
+    "url": "git+ssh://git@github.com/tonylua/lunar-cale.git"
   },
   "keywords": [
     "html5"
   ],
   "author": "tonylua@sina.com",
   "license": "ISC",
-  "homepage": "https://github.com/tonylua/mobile-utils",
+  "homepage": "https://github.com/tonylua/lunar-cale",
   "devDependencies": {
     "autoprefixer": "^6.4.0",
     "babel-cli": "^6.10.1",
