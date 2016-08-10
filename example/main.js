@@ -7,7 +7,6 @@ function _es6mod(mod) {
 
 var _myRjsConfigObj = {
     paths: {
-        "underscore": "../node_modules/underscore/underscore-min",
         "mobile-utils": "../node_modules/mobile-utils/lib/mobile-utils.min",
         "lunar-cale": "../lib/lunar-cale.min"
     },
@@ -17,7 +16,7 @@ var _myRjsConfigObj = {
 };
 require.config(_myRjsConfigObj);
 
-require(["underscore", "mobile-utils", "lunar-cale"], function(_, mUtils, lCale) {
+require(["mobile-utils", "lunar-cale"], function(mUtils, lCale) {
 
     var
         ele = document.querySelector('article'),
