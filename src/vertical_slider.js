@@ -1,4 +1,4 @@
-import {dom as m_dom, event as m_event, env as m_env} from 'mobile-utils';
+import {dom as m_dom, event as m_event, env as m_env} from 'mobile-utils'; // eslint-disable-line no-unused-vars
 
 const _time = ()=>(new Date).getTime();
 
@@ -47,6 +47,7 @@ export default class VSlider {
 		this._ontouchend = this._e_te.bind(this);
 		this._ontransitionend = this._e_tre.bind(this);
 		this.inner.addEventListener("touchstart", this._ontouchstart);
+		this.inner.addEventListener("onscroll", e=>e.preventDefault());
 	}
 	/**
 	 * 设置选择项
@@ -76,7 +77,7 @@ export default class VSlider {
 	 * @private
 	 */
 	_e_ts(e) { /*touchstart*/
-		if (!m_env.touchSupport) e.preventDefault();
+		e.preventDefault();
 
 		let
 			ct = this.container.getBoundingClientRect().top,
@@ -90,12 +91,14 @@ export default class VSlider {
 		e.currentTarget.addEventListener("touchmove", this._ontouchmove);
 		e.currentTarget.addEventListener("touchend", this._ontouchend);
 		e.currentTarget.addEventListener("touchcancel", this._ontouchend);
+
+		e.stopPropagation();
 	}
 	/**
 	 * @private
 	 */
 	_e_tm(e) { /*touchmove*/
-		if (!m_env.touchSupport) e.preventDefault();
+		e.preventDefault();
 
 		let 
 			{stageY, innerTop} = this.dinfo_start
@@ -108,12 +111,14 @@ export default class VSlider {
 			|| c.dataset['touching'] * 1 != 1) {
 			c.dataset['touching'] = 1;
 		}
+
+		e.stopPropagation();
 	}
 	/**
 	 * @private
 	 */
 	_e_te(e) { /*touchend*/
-		if (!m_env.touchSupport) e.preventDefault();
+		e.preventDefault();
 
 		e.currentTarget.removeEventListener("touchmove", this._ontouchmove);
 		e.currentTarget.removeEventListener("touchend", this._ontouchend);

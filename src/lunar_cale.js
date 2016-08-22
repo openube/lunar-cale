@@ -1,4 +1,4 @@
-import {env as m_env, format as m_format, utils as m_utils, time as m_time} from 'mobile-utils';
+import {env as m_env, format as m_format, utils as m_utils, time as m_time} from 'mobile-utils'; // eslint-disable-line no-unused-vars
 import VSlider from "./vertical_slider";
 import LunarFormatter from "./lunar_formatter";
 import css from './cale.less'; // eslint-disable-line no-unused-vars
@@ -6,7 +6,7 @@ import css from './cale.less'; // eslint-disable-line no-unused-vars
 const
 	domId = 'lunar_cale_panel'
 	,ensure_num = m_format.num_pad_left
-	,locker = new m_utils.ScrollLocker()
+	// ,screen_lock = e=>e.preventDefault()
 	,noop = ()=>void(0)
 	,find = (container, selector)=>container.querySelector(selector)
 	,vs_range = vslider=>vslider.getRange()
@@ -86,7 +86,8 @@ class LunarCale {
 	 * @return {Object} 当前控件
 	 */
 	show() {
-		locker.lock();
+		// locker.lock();
+		// document.addEventListener('touchmove', screen_lock, false);
 		this._is_visible = true;
 		this._render();
 		return this;
@@ -101,7 +102,8 @@ class LunarCale {
 			this._close_func();
 		}
 		this._is_visible = false;
-		locker.unlock();
+		//locker.unlock();
+		// document.removeEventListener('touchmove', screen_lock, false);
 		return this;
 	}
 
@@ -131,13 +133,13 @@ class LunarCale {
 			yE = parseInt(endYear),
 			yOld = initShownYMD
 				? (function(){
-						let earr = initShownYMD.split('-');
-						return {
-							year: earr[0],
-							month: ensure_num(earr[1]),
-							date: ensure_num(earr[2])
-						};
-					}())
+					let earr = initShownYMD.split('-');
+					return {
+						year: earr[0],
+						month: ensure_num(earr[1]),
+						date: ensure_num(earr[2])
+					};
+				}())
 				: null,
 
 			tmpl,
@@ -286,6 +288,7 @@ class LunarCale {
 			},
 			parseResult = function(){
 				let [y,m,d,lunar] = getResults();
+				yOld = {year:y, month:m, date:d};
 				if (_this.mode === LunarCale.LUNAR) {
 					find(document, `#${domId} .hd p`).innerHTML = `${lunar.Animal}年(${lunar.gzYear})`;
 				}
