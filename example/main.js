@@ -7,8 +7,8 @@ function _es6mod(mod) {
 
 var _myRjsConfigObj = {
     paths: {
-        "mobile-utils": "../node_modules/mobile-utils/lib/mobile-utils.min",
-        "lunar-cale": "../lib/lunar-cale.min"
+        "mobile-utils": "../node_modules/mobile-utils/lib/mobile-utils",
+        "lunar-cale": "../lib/lunar-cale"
     },
     shim: {
     },

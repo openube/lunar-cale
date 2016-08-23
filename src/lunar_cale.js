@@ -211,7 +211,7 @@ class LunarCale {
 						let d = plus_and_fix(i);
 						let args = [f, d];
 						if (_this.mode === LunarCale.LUNAR) {
-							let lunar = LunarFormatter.solar2lunar(y, ensure_num(m+1), d);
+							let lunar = LunarFormatter.solar2lunar(y, m+1, d);
 							let str = `${d} <small>${lunar.IMonthCn}${lunar.IDayCn}</small>`;
 							args.push(str);
 						}
@@ -236,7 +236,7 @@ class LunarCale {
 			checkDateNum = function(){
 				let
 					p_year = parseInt( vs_val(d_y) )
-					,p_month = parseInt( vs_val(d_m) ) - 1
+					,p_month = parseInt( Number(vs_val(d_m)) ) - 1 //Number转型for安卓老手机
 					,day = new Date
 					,dnum = 0
 					,did = `#${domId} .wbox.date`
