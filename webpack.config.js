@@ -40,7 +40,7 @@ let config = {
       },
       {
         test: /\.less$/,
-        loader: env==='build'
+        loader: true //env==='build'
           ? "style!css!postcss!less?noIeCompat"
           : "style!css!less"
       }

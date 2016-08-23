@@ -1,6 +1,6 @@
 {
   "name": "lunar-cale",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "touch control component can support the traditional Chinese calendar",
   "main": "lib/lunar-cale",
   "scripts": {
