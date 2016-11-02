@@ -299,8 +299,25 @@ class LunarCale {
 
 			fixStyle = function() {
 				if (!/normal/.test(find(document, `#${domId}`).className)) return;
+				//显示的5个项
 				[].forEach.call(document.querySelectorAll(`#${domId} ol li`), li=>(delete li.dataset['rowstyle']));
 				[d_y, d_m, d_d].map(vs_range).forEach(range=>range.forEach((item,idx)=>item.dataset['rowstyle']='row'+idx));
+				//修正垂直对齐
+				setTimeout(()=>{
+					[].forEach.call(document.querySelectorAll('.wbox ol'), function(ele) {
+						// ele.addEventListener('transitionend', e=>{
+						ele.style.marginTop = 0;
+						let ol = ele //e.currentTarget
+							,li = ol.querySelector('[data-rowstyle=row2]')
+							,gls = document.querySelector('.wglass')
+							,r1 = li.getBoundingClientRect()
+							,r2 = gls.getBoundingClientRect()
+						;
+						var diff = r1.top - (r2.top - .5*(r1.height - r2.height));
+						ol.style.marginTop = -Math.abs(diff) + 'px';
+						// });
+					});
+				}, 0);
 			},
 
 			closeFunc = function(e) { // eslint-disable-line no-unused-vars
