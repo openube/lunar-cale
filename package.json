@@ -1,10 +1,10 @@
 {
   "name": "lunar-cale",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "touch control component can support the traditional Chinese calendar",
   "main": "lib/lunar-cale",
   "scripts": {
-    "build": "webpack --mode=build",
+    "build": "npm run doc && webpack --mode=build",
     "dev": "webpack --progress --colors --watch --mode=dev",
     "doc": "jsdoc2md src/lunar_cale.js --template README.hbs > README.md"
   },
@@ -13,7 +13,9 @@
     "url": "git+ssh://git@github.com/tonylua/lunar-cale.git"
   },
   "keywords": [
-    "html5"
+    "html5",
+    "calendar",
+    "lunar"
   ],
   "author": "tonylua@sina.com",
   "license": "ISC",

@@ -30,12 +30,12 @@ see /example/index.html
 <a name="new_LunarCale_new"></a>
 
 ### new LunarCale([setting])
-参数说明： mode - 初始模式; startYear - 开始年份 yyyy; endYear - 结束年份 yyyy; initShownYMD - 初始选中的日期 yyyy-mm-dd; selectCallback - 选中新值时的回调函数 - 关闭面板时的回调函数
+参数说明： mode - 初始模式; lang - 语言; startYear - 开始年份 yyyy; endYear - 结束年份 yyyy; initShownYMD - 初始选中的日期 yyyy-mm-dd; selectCallback - 选中新值时的回调函数 - 关闭面板时的回调函数
 
 
 | Param | Type | Default |
 | --- | --- | --- |
-| [setting] | <code>Object</code> | <code>{mode, startYear, endYear, initShownYMD, selectCallback, closeCallback}</code> | 
+| [setting] | <code>Object</code> | <code>{mode, lang, startYear, endYear, initShownYMD, selectCallback, closeCallback}</code> | 
 
 <a name="LunarCale+isVisible"></a>
 

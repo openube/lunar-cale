@@ -1,7 +1,13 @@
-import {env as m_env, format as m_format, utils as m_utils, time as m_time} from 'mobile-utils'; // eslint-disable-line no-unused-vars
+import {
+	env as m_env, 
+	format as m_format,
+	time as m_time, 
+	lang as m_lang
+} from 'mobile-utils';
 import VSlider from "./vertical_slider";
 import LunarFormatter from "./lunar_formatter";
 import css from './cale.less'; // eslint-disable-line no-unused-vars
+import i18n from './i18n';
 
 const
 	domId = 'lunar_cale_panel'
@@ -11,12 +17,15 @@ const
 	,find = (container, selector)=>container.querySelector(selector)
 	,vs_range = vslider=>vslider.getRange()
 	,vs_val = vslider=>vs_range(vslider)[2].getAttribute('rel')
-	,lunar_str = lunar=>`${lunar.Animal}年 ${lunar.gzYear} ${lunar.IMonthCn} ${lunar.IDayCn}`
+	,lunar_str = (lang, lunar)=>{
+		const ayear = m_lang.read_i18n(i18n[lang]['animal_year'], lunar.Animal);
+		return `${ayear} ${lunar.gzYear} ${lunar.IMonthCn} ${lunar.IDayCn}`
+	}
 	,li_tmpl = type=>(f, idx, display=null) => `<li id="${type}_li${f}" rel="${idx}">${display || idx}</li>`
 	,year_tmpl = li_tmpl('year')
 	,month_tmpl = li_tmpl('month')
 	,date_tmpl = li_tmpl('date')
-	,base_tmpl = (mode=LunarCale.SOLAR)=>`
+	,base_tmpl = (lang, mode=LunarCale.SOLAR)=>`
 		<div id="${domId}"
 			class="${
 				mode===LunarCale.LUNAR?'lunar':'solar'
@@ -26,9 +35,9 @@ const
 			<div class="hd">
 				<label><input type="checkbox"
 					class="mod_round_checkbox"
-					${mode===LunarCale.LUNAR?'checked':''} />农历</label>
+					${mode===LunarCale.LUNAR?'checked':''} />${i18n[lang]['lunar_calendar']}</label>
 				<p></p>
-				<a class="finishBtn">完成</a>
+				<a class="finishBtn">${i18n[lang]['done']}</a>
 			</div>
 			<div class="bd">
 				<div class="win">
@@ -110,8 +119,8 @@ class LunarCale {
 	/**
 	 * 构造函数
 	 * @constructor
-	 * @param  {Object} [setting={mode, startYear, endYear, initShownYMD, selectCallback, closeCallback}]
-	 * @description 参数说明： mode - 初始模式; startYear - 开始年份 yyyy; endYear - 结束年份 yyyy; initShownYMD - 初始选中的日期 yyyy-mm-dd; selectCallback - 选中新值时的回调函数 - 关闭面板时的回调函数
+	 * @param  {Object} [setting={mode, lang, startYear, endYear, initShownYMD, selectCallback, closeCallback}]
+	 * @description 参数说明： mode - 初始模式; lang - 语言; startYear - 开始年份 yyyy; endYear - 结束年份 yyyy; initShownYMD - 初始选中的日期 yyyy-mm-dd; selectCallback - 选中新值时的回调函数 - 关闭面板时的回调函数
 	 * @return {Object} 当前控件
 	 */
 	constructor(setting) {
@@ -119,6 +128,7 @@ class LunarCale {
 			_this = this,
 			cfg = Object.assign({
 				mode: LunarCale.SOLAR
+				,lang: 'zh'
 				,startYear: 1970
 				,endYear: m_time.today().getFullYear()
 				,initShownYMD: m_time.date_to_YMD(m_time.today())
@@ -293,7 +303,7 @@ class LunarCale {
 					find(document, `#${domId} .hd p`).innerHTML = `${lunar.Animal}年(${lunar.gzYear})`;
 				}
 				if (selectCallback !== noop){
-					selectCallback.call(null, y, m, d, lunar_str(lunar));
+					selectCallback.call(null, y, m, d, lunar_str(cfg.lang, lunar));
 				}
 			},
 
@@ -335,11 +345,17 @@ class LunarCale {
 
 		this._mode = cfg.mode;
 
+		if (/^zh(\-|$)/.test(cfg.lang.toLowerCase())) {
+			cfg.lang = 'zh';
+		} else {
+			cfg.lang = 'en';
+		}
+
 		this._render = () => {
 			let ap = document.getElementById(domId);
 			if (ap)	closeFunc();
 
-			tmpl = base_tmpl(this._mode);
+			tmpl = base_tmpl(cfg.lang, this._mode);
 
 			fillYears();
 			fillMonths();
@@ -374,7 +390,7 @@ class LunarCale {
 			if (closeCallback !== noop) {
 				find(ap, '.finishBtn').addEventListener('click', function(){
 					let [y,m,d,lunar] = getResults();
-					closeCallback(y,m,d,lunar_str(lunar));
+					closeCallback(y,m,d,lunar_str(cfg.lang, lunar));
 				});
 			}
 			find(ap, '.hd input[type=checkbox]').addEventListener('click', e=>{
