@@ -23,6 +23,7 @@ see /example/index.html
 
 * [LunarCale](#LunarCale) : <code>Object</code>
     * [new LunarCale([setting])](#new_LunarCale_new)
+    * [.el](#LunarCale+el) ⇒ <code>HTMLElement</code>
     * [.isVisible](#LunarCale+isVisible) : <code>Boolean</code>
     * [.show()](#LunarCale+show) ⇒ <code>Object</code>
     * [.hide()](#LunarCale+hide) ⇒ <code>Object</code>
@@ -37,6 +38,12 @@ see /example/index.html
 | --- | --- | --- |
 | [setting] | <code>Object</code> | <code>{mode, lang, startYear, endYear, initShownYMD, selectCallback, closeCallback}</code> | 
 
+<a name="LunarCale+el"></a>
+
+### lunarCale.el ⇒ <code>HTMLElement</code>
+取得组件的DOM
+
+**Kind**: instance property of <code>[LunarCale](#LunarCale)</code>  
 <a name="LunarCale+isVisible"></a>
 
 ### lunarCale.isVisible : <code>Boolean</code>

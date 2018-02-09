@@ -22,6 +22,7 @@ require(["mobile-utils", "lunar-cale"], function(mUtils, lCale) {
         ele = document.querySelector('article'),
         lc = new lCale({
             mode: lCale.LUNAR,
+            lang: Math.random()>.5 ? 'zh' : 'en',
             startYear: 1982,
             endYear: 2022,
             initShownYMD: '2016-09-01',

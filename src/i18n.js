@@ -1,12 +1,16 @@
 export const en = {
-	animal_year: 'year of {0}',
+	animal_year: '{0}年', //'year of "{0}"',
 	done: 'Done',
 	lunar_calendar: 'Lunar Calendar',
 };
 
-const zh = {
+export const zh = {
 	animal_year: '{0}年',
 	done: '完成',
 	lunar_calendar: '农历',
 };
-export default zh;
+
+export default {
+	zh,
+	en
+}

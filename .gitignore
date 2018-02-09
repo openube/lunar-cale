@@ -1,2 +1,6 @@
 node_modules
 .DS_Store
+
+!.*rc
+!.*ignore
+!__test__*

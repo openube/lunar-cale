@@ -25,8 +25,10 @@ const
 	,year_tmpl = li_tmpl('year')
 	,month_tmpl = li_tmpl('month')
 	,date_tmpl = li_tmpl('date')
-	,base_tmpl = (lang, mode=LunarCale.SOLAR)=>`
-		<div id="${domId}"
+	,base_tmpl = (lang, mode=LunarCale.SOLAR)=>{
+		const word_lc = i18n[lang]['lunar_calendar'];
+		const word_dn = i18n[lang]['done'];
+		return `<div id="${domId}"
 			class="${
 				mode===LunarCale.LUNAR?'lunar':'solar'
 			} ${
@@ -35,9 +37,9 @@ const
 			<div class="hd">
 				<label><input type="checkbox"
 					class="mod_round_checkbox"
-					${mode===LunarCale.LUNAR?'checked':''} />${i18n[lang]['lunar_calendar']}</label>
+					${mode===LunarCale.LUNAR?'checked':''} />${word_lc}</label>
 				<p></p>
-				<a class="finishBtn">${i18n[lang]['done']}</a>
+				<a class="finishBtn">${word_dn}</a>
 			</div>
 			<div class="bd">
 				<div class="win">
@@ -57,6 +59,7 @@ const
 				</div>
 			</div>
 		</div>`
+	}
 ;
 
 /**
@@ -80,6 +83,14 @@ class LunarCale {
 		}
 		this._mode = m;
 		this._render();
+	}
+
+	/**
+	 * 取得组件的DOM
+	 * @return {HTMLElement}
+	 */
+	get el() {
+		return document.getElementById(domId);
 	}
 
 	/**
@@ -344,8 +355,9 @@ class LunarCale {
 		;
 
 		this._mode = cfg.mode;
+		this._cfg = cfg;
 
-		if (/^zh(\-|$)/.test(cfg.lang.toLowerCase())) {
+		if (!cfg.lang || /^zh(\-|$)/.test(cfg.lang.toLowerCase())) {
 			cfg.lang = 'zh';
 		} else {
 			cfg.lang = 'en';
@@ -386,13 +398,16 @@ class LunarCale {
 				}
 			});
 
-			find(ap, '.finishBtn').addEventListener('click', closeFunc);
-			if (closeCallback !== noop) {
-				find(ap, '.finishBtn').addEventListener('click', function(){
-					let [y,m,d,lunar] = getResults();
-					closeCallback(y,m,d,lunar_str(cfg.lang, lunar));
-				});
-			}
+			//for test
+			find(ap, '.finishBtn').onclick=function(e) {
+			// find(ap, '.finishBtn').addEventListener('click', function(e){
+				closeFunc(e);
+				let [y,m,d,lunar] = getResults();
+				// console.log(y,m,d,lunar)
+				closeCallback(y,m,d,lunar_str(cfg.lang, lunar));
+			// });
+			};
+
 			find(ap, '.hd input[type=checkbox]').addEventListener('click', e=>{
 				let lunar_mode = e.currentTarget.checked;
 				_this.mode = lunar_mode ? LunarCale.LUNAR : LunarCale.SOLAR;
