@@ -1,5 +1,5 @@
 export const en = {
-	animal_year: '{0}年', //'year of "{0}"',
+	animal_year: 'Year of "{0}"',
 	done: 'Done',
 	lunar_calendar: 'Lunar Calendar',
 };

@@ -47,6 +47,7 @@
     "yargs": "^4.7.1"
   },
   "dependencies": {
+    "fsevents": "^1.2.4",
     "mobile-utils": "^1.0.12"
   }
 }

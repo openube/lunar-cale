@@ -5,9 +5,9 @@ import {
 	lang as m_lang
 } from 'mobile-utils';
 import VSlider from "./vertical_slider";
-import LunarFormatter from "./lunar_formatter";
-import css from './cale.less'; // eslint-disable-line no-unused-vars
+import Formatter from "./formatter";
 import i18n from './i18n';
+import './cale.less';
 
 const
 	domId = 'lunar_cale_panel'
@@ -232,7 +232,7 @@ class LunarCale {
 						let d = plus_and_fix(i);
 						let args = [f, d];
 						if (_this.mode === LunarCale.LUNAR) {
-							let lunar = LunarFormatter.solar2lunar(y, m+1, d);
+							let lunar = Formatter.solar2lunar(y, m+1, d);
 							let str = `${d} <small>${lunar.IMonthCn}${lunar.IDayCn}</small>`;
 							args.push(str);
 						}
@@ -300,7 +300,7 @@ class LunarCale {
 							vs_val(d_m),
 							vs_val(d_d)
 						]
-						,lunar = LunarFormatter.solar2lunar.apply(null, rst)
+						,lunar = Formatter.solar2lunar.apply(null, rst)
 					;
 					rst.push(lunar);
 					return rst;

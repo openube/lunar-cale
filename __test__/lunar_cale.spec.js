@@ -2,6 +2,7 @@ import $ from 'jquery';
 import lCale from 'lunar_cale';
 
 describe('test the component', function() {
+
 	it('should render basic UI', function() {
 
 		let lc = new lCale({
@@ -22,6 +23,7 @@ describe('test the component', function() {
 		expect($el.find('.wbox.month li[data-rowstyle="row2"]').html()).toEqual('01');
 		expect($el.find('.wbox.date li[data-rowstyle="row2"]').html()).toEqual('02');
 	});
+
 	it('should trigger callbacks', function() {
 
 		const fn1 = jest.fn();
@@ -47,6 +49,7 @@ describe('test the component', function() {
 		$el.find('.finishBtn').trigger('click');
 		expect(fn2).toHaveBeenCalled();
 	});
+
 	it('should support English', function() {
 		let lc = new lCale({
 			lang: 'en',
@@ -61,4 +64,5 @@ describe('test the component', function() {
 
 		expect($el.find('.finishBtn').html()).toEqual("Done");
 	});
+	
 });
