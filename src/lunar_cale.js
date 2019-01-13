@@ -19,6 +19,7 @@ const
 	,vs_val = vslider=>vs_range(vslider)[2].getAttribute('rel')
 	,lunar_str = (lang, lunar)=>{
 		const ayear = m_lang.read_i18n(i18n[lang]['animal_year'], lunar.Animal);
+		console.log(lunar)
 		return `${ayear} ${lunar.gzYear} ${lunar.IMonthCn} ${lunar.IDayCn}`
 	}
 	,li_tmpl = type=>(f, idx, display=null) => `<li id="${type}_li${f}" rel="${idx}">${display || idx}</li>`
